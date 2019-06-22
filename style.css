@@ -1,0 +1,12 @@
+body{
+    color: #252525;
+    font-size: 14px;
+    font-family: 'Pontano Sans', sans-serif;
+    background-color: #fbfbfb;
+}
+
+#menu {
+    position: fixed;
+    user-select: none;
+}
+
