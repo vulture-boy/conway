@@ -13,12 +13,18 @@ var extentsY;
 
 // Initialization
 function setup() {
+
+    // Prepare Canvas
     extentsX = windowWidth; 
     extentsY = windowHeight;
     var cnv = createCanvas(extentsX, extentsY);
     cnv.position(0, 0);
     cnv.parent('canvas');
     cnv.style('z-index','-1'); // Canvas as background element
+
+    // Prepare Sliders
+
+    // Setup Cells
     InitializeCells();
 }
 

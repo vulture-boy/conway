@@ -10,7 +10,7 @@
   </head>
   <body>
 
-      <div id="menu"> 
+      <div id="menu">
         <h1>conway machine</h1>
         <a href="https://twitter.com/vvvultures"><i class="fab fa-twitter"></i></a>
         <a href="https://www.instagram.com/friendly_vultures/"><i class="fab fa-instagram"></i></a>
@@ -21,7 +21,11 @@
         <a href="https://tysonmoll.ca">portfolio </a><br>
         <a href="./about.php">about this page</a><br>
 
-          <br>
+        <br>
+
+        <div class="options">
+          <input type="range" min="1" max="128" value="5" class="slider" id="cellSize">
+        </div>
       </div>
 
       <div id="canvas"></div>
