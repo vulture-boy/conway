@@ -8,5 +8,6 @@ body{
 #menu {
     position: fixed;
     user-select: none;
+    background-color: #ccccccaa;
 }
 

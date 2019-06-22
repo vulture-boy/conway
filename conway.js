@@ -2,12 +2,12 @@
 // Globals
 var cells = [];
 var cellsTemp = []; // Used for storing update data
-var cellSize = 20; // Cell Size (pixels)
+var cellSize = 40; // Cell Size (pixels)
 var initMethod = 1; // Determines which method to use when assigning init values
 var cycleMethod = 0; // Determines which action method to apply each cycle
 var autoRun = true;
 var autoRunTime = 0;
-var autoRunTimeMax = 10;
+var autoRunTimeMax = 400; // milliseconds
 var extentsX; // Changes the size of the canvas
 var extentsY; 
 
@@ -27,8 +27,9 @@ function draw() {
 
     // Action
     if (autoRun) {
-        autoRunTime++;
-        if (autoRunTime > autoRunTimeMax) {
+
+        // Check if dx time exceeds wait time
+        if (autoRunTimeMax < millis() - autoRunTime) {
             switch (cycleMethod) {
                 case 0:
                 default:
@@ -36,7 +37,7 @@ function draw() {
                 break;
             }
 
-            autoRunTime = 0;
+            autoRunTime = millis(); // Reset the timer
         }
     }
 
