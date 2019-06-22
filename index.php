@@ -22,9 +22,15 @@
         <a href="./about.php">about this page</a><br>
 
         <br>
+        <button id="optToggle" onclick="OptionToggle()">Hide Options</button>
 
-        <div class="options">
+        <div id="options" display="block">
+        <br>
+          <div id="cellSizeValue">Cell Size: 5</div>
           <input type="range" min="1" max="128" value="5" class="slider" id="cellSize">
+          <div id="updateSpeedValue">Update Speed: 500</div>
+          <input type="range" min="1" max="3000" value="500" class="slider" id="updateSpeed">
+          <span max-size="50%"><p>Note: update speed (in milliseconds)<br> is dependent on PC processing power.</p></span>
         </div>
       </div>
 

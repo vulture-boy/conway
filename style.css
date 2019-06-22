@@ -9,5 +9,6 @@ body{
     position: fixed;
     user-select: none;
     background-color: #ccccccaa;
+    max-width: 75%;
 }
 

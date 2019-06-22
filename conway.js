@@ -2,14 +2,16 @@
 // Globals
 var cells = [];
 var cellsTemp = []; // Used for storing update data
-var cellSize = 40; // Cell Size (pixels)
+var cellSize = 5; // Cell Size (pixels)
+var sliderSize;
 var initMethod = 1; // Determines which method to use when assigning init values
 var cycleMethod = 0; // Determines which action method to apply each cycle
 var autoRun = true;
 var autoRunTime = 0;
 var autoRunTimeMax = 400; // milliseconds
 var extentsX; // Changes the size of the canvas
-var extentsY; 
+var extentsY;
+var options; // Holds all sliders and buttons for controls
 
 // Initialization
 function setup() {
@@ -22,7 +24,20 @@ function setup() {
     cnv.parent('canvas');
     cnv.style('z-index','-1'); // Canvas as background element
 
+    options = document.getElementById('options');
+
     // Prepare Sliders
+    sliderSize = document.getElementById('cellSize');
+    sliderSizeNum = document.getElementById('cellSizeValue');
+    sliderSize.value = cellSize;
+    sliderSize.min = 1;
+    sliderSize.max = 100;
+
+    sliderUpdate = document.getElementById('updateSpeed');
+    sliderUpdateNum = document.getElementById('updateSpeedValue');
+    sliderUpdate.value = autoRunTimeMax;
+    sliderUpdate.min = 1;
+    sliderUpdate.max = 750;
 
     // Setup Cells
     InitializeCells();
@@ -31,7 +46,35 @@ function setup() {
 // Called once every frame
 function draw() {
 
-    // Action
+    CheckData(); // Check Data
+    RunActions(); // Action
+    Visualize(); // Visualization
+
+}
+
+function CheckData() {
+
+    // Update Slider Numbers
+    sliderSizeNum.innerHTML = "Cell Size: " + sliderSize.value;
+    sliderUpdateNum.innerHTML = "Update Speed: " + sliderUpdate.value;
+
+    var triggerReset = false;
+    if (cellSize != sliderSize.value) {
+        cellSize = sliderSize.value
+        triggerReset = true;
+    }
+    if (autoRunTimeMax != sliderUpdate.value) {
+        autoRunTimeMax = sliderUpdate.value;
+        autoRunTime = millis();
+    }
+
+    if (triggerReset) {
+        InitializeCells();
+    }
+}
+
+function RunActions() {
+        
     if (autoRun) {
 
         // Check if dx time exceeds wait time
@@ -46,10 +89,6 @@ function draw() {
             autoRunTime = millis(); // Reset the timer
         }
     }
-
-    // Visualization
-    Visualize();
-
 }
 
 function mouseReleased() {
@@ -182,3 +221,15 @@ function InitializeCells() {
     }
 }
 
+/// Toggles visibility of options menu
+function OptionToggle() {
+    optToggle = document.getElementById("optToggle");
+
+    if (options.style.display === "none") {
+        options.style.display = "block";
+        optToggle.innerHTML = "Hide Options"
+    } else {
+        options.style.display = "none";
+        optToggle.innerHTML = "Show Options"
+    }
+}
