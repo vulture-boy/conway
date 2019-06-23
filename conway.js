@@ -17,7 +17,13 @@ Written by Tyson Moll */
     {
         var initMethod = 1; // Determines which method to use when assigning init values
         var cycleMethod = 0; // Determines which action method to apply each cycle
+        var mirrorMethod = 3; // Method of symmettry
         var autoRun = true; // Whether to automatically advance the cycle
+        var tick = false; // Set to true to advance by one cycle while paused
+        var generations = 1; // Number of cell generations to track
+        var maxCellAge = 5; // Maximum number of cell generations to track (DOM LIMIT)
+        var genColMethod = 0; // Method to apply colour for generations
+        var genColOptions = 2; // Total num. of options
         var autoRunTime = 0; // Last recorded cycle end time
         var autoRunTimeMax = 60; // Required difference between current time and last recorded cycle time
     }
@@ -77,6 +83,16 @@ Written by Tyson Moll */
         fieldColLive = [document.getElementById('colLiveR'), document.getElementById('colLiveG'), document.getElementById('colLiveB')];
         fieldColDead = [document.getElementById('colDeadR'), document.getElementById('colDeadG'), document.getElementById('colDeadB')];
         RandomizeColors();
+
+        // Cell Age
+        fieldCellAge = document.getElementById('cellAge');
+        fieldCellAge.value = generations;
+        fieldGenCol = document.getElementById('cellAgeCol');
+        fieldGenCol.value = genColMethod;
+
+        // SFX
+        fieldMirror = document.getElementById('cellMirror');
+        fieldMirror.value = mirrorMethod;
         
     }
 
@@ -128,15 +144,23 @@ Written by Tyson Moll */
         sliderUpdateNum.innerHTML = "Update Delay: " + sliderUpdate.value;
 
         var triggerReset = false; // Flag to refresh cell status
-        if (cellSize != sliderSize.value) { 
+        if (cellSize != sliderSize.value) {  // Size Change
             cellSize = sliderSize.value
             triggerReset = true;
         }
-        if (autoRunTimeMax != sliderUpdate.value) {
+        if (autoRunTimeMax != sliderUpdate.value) { // Delay Change
             autoRunTimeMax = sliderUpdate.value;
             autoRunTime = millis();
         }
-        GetNewColor();
+        GetNewColor(); // Colour Changes
+
+        // General field changes
+        fieldCellAge.value = clamp(fieldCellAge.value, 1, maxCellAge);
+        generations = fieldCellAge.value;
+        fieldGenCol.value = clamp(fieldGenCol.value, 0, genColOptions);
+        genColMethod = fieldGenCol.value;
+        fieldMirror.value = clamp(fieldMirror.value, 0, 3)
+        mirrorMethod = fieldMirror.value;
 
         if (triggerReset) {
             InitializeCells();
@@ -145,7 +169,7 @@ Written by Tyson Moll */
     /// Determines when cycles are processed
     function RunActions() {
             
-        if (autoRun) {
+        if (autoRun || tick) {
 
             // Check if dx time exceeds wait time
             if (autoRunTimeMax < millis() - autoRunTime) {
@@ -158,6 +182,8 @@ Written by Tyson Moll */
 
                 autoRunTime = millis(); // Reset the timer
             }
+
+            tick = false;
         }
     }
     /// Draws the cell status to the screen
@@ -165,13 +191,40 @@ Written by Tyson Moll */
         for (var i=0; i<numCellsX; i++) {
             for (var j=0; j<numCellsY; j++) {
             
+                var mirroredGrid = GridMirror(i,j); // Get symmettry viz
+                var m = mirroredGrid[0]; var n = mirroredGrid[1]; // Substitution values
+
                 noStroke();
                 var c = color(0,0,0);
                 // Select Color
-                if (cells[i][j] == 0) { // Dead
+                if (cells[m][n] == 0) { // Dead
                     c = deadColor;
-                } else if (cells[i][j] == 1) { // Alive
+                } else if (cells[m][n] == 1 && generations == 1) { // Alive
                     c = liveColor;
+                } else if (cells[m][n] >= 1 && generations > 1) { // Alive, Multigenerational
+                    switch (genColMethod) {
+                        case 1: // Inverse
+                            c = color(round(red(liveColor) * (1 - cells[m][n] / generations)), 
+                                round(green(liveColor) * (1 - cells[m][n] / generations)), 
+                                round(blue(liveColor) * (1 - cells[m][n] / generations))
+                                );
+                        break;
+                        case 2: // Brightening
+                            c = color(red(liveColor) + round((255 - red(liveColor)) * cells[m][n] / generations), 
+                                    green(liveColor) + round((255 - green(liveColor)) * cells[m][n] / generations), 
+                                    blue(liveColor) + round((255 - blue(liveColor)) * cells[m][n] / generations)
+                            );
+                        break;
+
+                        default:
+                        case 0:  // Darkening
+                            c = color(round(red(liveColor) * cells[m][n] / generations), 
+                                    round(green(liveColor) * cells[m][n] / generations), 
+                                    round(blue(liveColor) * cells[m][n] / generations)
+                                );
+                        break;
+                    }
+
                 } else {
                     c = color(0,0,0);
                 }
@@ -206,7 +259,7 @@ Written by Tyson Moll */
                         }
 
                         // Is this valid cell dead or alive?
-                        if (cells[i+m][j+n] == 1) {
+                        if (cells[i+m][j+n] >= 1) {
                             liveNeighbours++;
                         }
                     }
@@ -220,7 +273,7 @@ Written by Tyson Moll */
                         cellsTemp[i][j] = 0;
                     }
 
-                } else if (cells[i][j] == 1) { // Living Cell
+                } else if (cells[i][j] >= 1) { // Living Cell
                     // Note: Cells with 2-3 living neighbours survive
                     
                     if (liveNeighbours < 2) {
@@ -230,12 +283,10 @@ Written by Tyson Moll */
                         // Cells with more than 3 living neighbours die
                         cellsTemp[i][j] = 0;
                     } else {
-                        cellsTemp[i][j] = 1;
+                        cellsTemp[i][j] = cells[i][j] + 1; // Cell gets older
+                        cellsTemp[i][j] = Math.min(cellsTemp[i][j], generations); // Generation Cap
                     }
                 }
-                
-                
-                
             }
         }
 
@@ -247,6 +298,31 @@ Written by Tyson Moll */
             }
         }
     }
+
+    /// Gets mirrored co-ordinates
+    function GridMirror(xPoint, yPoint) {
+    
+        var m = xPoint; var n = yPoint;
+        switch (mirrorMethod) {
+            case 1: // Horizontal
+                if (xPoint > numCellsX/2) {m = numCellsX - xPoint;} 
+            break;
+
+            case 2: // Vertical
+                if (yPoint > numCellsY/2) {n = numCellsY - yPoint;}
+            break;
+
+            case 3: // 4 Panel
+                if (xPoint > numCellsX/2) {m = numCellsX - xPoint;} 
+                if (yPoint > numCellsY/2) {n = numCellsY - yPoint;}
+            break;
+
+            case 0: // No Mirror
+            default:
+            break;
+        }
+        return [m, n];
+    }
 }
 
 ////////////////// USER INTERACTION ELEMENTS /////////////
@@ -255,15 +331,17 @@ Written by Tyson Moll */
     function mousePressed() {
 
         // Find cell position relative to mouse
-        var cellX = floor((mouseX / windowWidth) * numCellsX);
-        var cellY = floor((mouseY / windowHeight) * numCellsY);
+        var i = floor((mouseX / windowWidth) * numCellsX);
+        var j = floor((mouseY / windowHeight) * numCellsY);
+
+        var mPoint = GridMirror(i,j);
 
         // Confirm Cell is within space
-        if (cellX >= 0 && cellX < numCellsX && cellY >= 0 && cellY < numCellsY) {
-            if (cells[cellX][cellY] == 0) {
-                cells[cellX][cellY] = 1;
-            } else if (cells[cellX][cellY] == 1)  {
-                cells[cellX][cellY] = 0;
+        if (mPoint[0] >= 0 && mPoint[0] < numCellsX && mPoint[1] >= 0 && mPoint[1] < numCellsY) {
+            if (cells[mPoint[0]][mPoint[1]] == 0) {
+                cells[mPoint[0]][mPoint[1]] = 1;
+            } else if (cells[mPoint[0]][mPoint[1]] >= 1)  {
+                cells[mPoint[0]][mPoint[1]] = 0;
             }
         }
 
@@ -322,6 +400,9 @@ Written by Tyson Moll */
         extentsY = windowHeight;
         resizeCanvas(extentsX, extentsY);
         InitializeCells(); // Refresh cell drawing
+    }
+    function Tick() {
+        tick = true;
     }
 }
 

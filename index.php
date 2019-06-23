@@ -19,10 +19,10 @@
         <br>
         
         <a href="https://tysonmoll.ca">portfolio </a><br>
-        <a href="./about.php">about this page</a><br>
+        <a href="./about.php">about this page</a><br><br>
 
         <button id="refresh" onclick="InitializeCells()">Refresh</button>
-        <button id="pseToggle" onclick="PauseToggle()">Pause</button>
+        <button id="pseToggle" onclick="PauseToggle()">Pause</button><button id="tick" onclick="Tick()">+1</button>
         <br>
         <button id="optToggle" onclick="OptionToggle()">Hide Options</button>
 
@@ -44,7 +44,15 @@
           <input type="number" min="0" max="255" value="168" class="rgb" id="colDeadG">
           <input type="number" min="0" max="255" value="88" class="rgb" id="colDeadB"> <br>
 
-          <button id="randomBtn" onclick="RandomizeColors()">Randomize Colours!</button>
+          <button id="randomBtn" onclick="RandomizeColors()">Randomize Colours!</button> 
+          <br><br>
+          Cell Age 
+          <input type="number" min="1" max="20" value="1" id="cellAge">
+          Col. Mode
+          <input type="number" min="0" max="2" value="1" id="cellAgeCol"> 
+          <br>
+          Mirror Mode
+          <input type="number" min="0" max="3" value="0" id="cellMirror">
 
         </div>
       </div>
