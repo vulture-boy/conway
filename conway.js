@@ -19,7 +19,7 @@ Written by Tyson Moll */
         var cycleMethod = 0; // Determines which action method to apply each cycle
         var autoRun = true; // Whether to automatically advance the cycle
         var autoRunTime = 0; // Last recorded cycle end time
-        var autoRunTimeMax = 400; // Required difference between current time and last recorded cycle time
+        var autoRunTimeMax = 60; // Required difference between current time and last recorded cycle time
     }
 
     // Canvas Properties
@@ -76,16 +76,7 @@ Written by Tyson Moll */
         // Live / Dead Colors
         fieldColLive = [document.getElementById('colLiveR'), document.getElementById('colLiveG'), document.getElementById('colLiveB')];
         fieldColDead = [document.getElementById('colDeadR'), document.getElementById('colDeadG'), document.getElementById('colDeadB')];
-
-        var initDeadRGB = [181,224,190]; // Setup Initial Values
-        var initLiveRGB = [104,163,116];
-
-        for (var i=0;i<3;i++) {
-            fieldColLive[i].value = initLiveRGB[i];
-            fieldColDead[i].value = initDeadRGB[i];
-        }
-
-        GetNewColor(); // Create colours from DOM properties
+        RandomizeColors();
         
     }
 
@@ -309,7 +300,19 @@ Written by Tyson Moll */
             fieldColLive[i].value = clamp(fieldColLive[i].value, 0,255);
         }
 
-        // Apply colours
+        CreateColors();
+    }
+    /// Randomizes Colors
+    function RandomizeColors() {
+        for (var i=0; i<2; i++) {
+            fieldColDead[i].value = round(random() * 255);
+            fieldColLive[i].value = round(random() * 255);
+        }
+
+        CreateColors();
+    }
+    /// Creates colors with DOM values
+    function CreateColors() {
         liveColor = color(fieldColLive[0].value, fieldColLive[1].value, fieldColLive[2].value);
         deadColor = color(fieldColDead[0].value, fieldColDead[1].value, fieldColDead[2].value);
     }

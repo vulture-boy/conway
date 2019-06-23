@@ -44,6 +44,8 @@
           <input type="number" min="0" max="255" value="168" class="rgb" id="colDeadG">
           <input type="number" min="0" max="255" value="88" class="rgb" id="colDeadB"> <br>
 
+          <button id="randomBtn" onclick="RandomizeColors()">Randomize Colours!</button>
+
         </div>
       </div>
 
