@@ -8,7 +8,7 @@ Written by Tyson Moll */
     {    
         var cells = []; // Array of all cells in process
         var cellsTemp = []; // Used for storing update data (aka next generation)
-        var cellSize = 5; // Cell Size (pixels)
+        var cellSize = 15; // Cell Size (pixels)
         var deadColor; // The colour of a dead cell
         var liveColor; // The colour of a live cell
     }
@@ -22,7 +22,7 @@ Written by Tyson Moll */
         var tick = false; // Set to true to advance by one cycle while paused
         var generations = 1; // Number of cell generations to track
         var maxCellAge = 5; // Maximum number of cell generations to track (DOM LIMIT)
-        var genColMethod = 0; // Method to apply colour for generations
+        var genColMethod = 1; // Method to apply colour for generations
         var genColOptions = 2; // Total num. of options
         var autoRunTime = 0; // Last recorded cycle end time
         var autoRunTimeMax = 60; // Required difference between current time and last recorded cycle time
@@ -38,6 +38,12 @@ Written by Tyson Moll */
     {
         var options; // DOM div holding all sliders and buttons for controls
         var sliderSize; // Slider reference for 
+        var sliderSizeNum;
+        var sliderUpdate;
+        var sliderUpdateNum;
+        var fieldCellAge;
+        var fieldGenCol;
+        var fieldMirror;
         var fieldColDead = []; // numeric DOM fields for dead cell colours
         var fieldColLive = []; // numeric DOM fields for live cell colours
     }
@@ -159,7 +165,7 @@ Written by Tyson Moll */
         generations = fieldCellAge.value;
         fieldGenCol.value = clamp(fieldGenCol.value, 0, genColOptions);
         genColMethod = fieldGenCol.value;
-        fieldMirror.value = clamp(fieldMirror.value, 0, 3)
+        fieldMirror.value = clamp(fieldMirror.value, 0, 3);
         mirrorMethod = fieldMirror.value;
 
         if (triggerReset) {
@@ -193,6 +199,7 @@ Written by Tyson Moll */
             
                 var mirroredGrid = GridMirror(i,j); // Get symmettry viz
                 var m = mirroredGrid[0]; var n = mirroredGrid[1]; // Substitution values
+                if (mirroredGrid[0] != i) {console.log("note");}
 
                 noStroke();
                 var c = color(0,0,0);
@@ -202,29 +209,23 @@ Written by Tyson Moll */
                 } else if (cells[m][n] == 1 && generations == 1) { // Alive
                     c = liveColor;
                 } else if (cells[m][n] >= 1 && generations > 1) { // Alive, Multigenerational
-                    switch (genColMethod) {
-                        case 1: // Inverse
-                            c = color(round(red(liveColor) * (1 - cells[m][n] / generations)), 
-                                round(green(liveColor) * (1 - cells[m][n] / generations)), 
-                                round(blue(liveColor) * (1 - cells[m][n] / generations))
-                                );
-                        break;
-                        case 2: // Brightening
-                            c = color(red(liveColor) + round((255 - red(liveColor)) * cells[m][n] / generations), 
-                                    green(liveColor) + round((255 - green(liveColor)) * cells[m][n] / generations), 
-                                    blue(liveColor) + round((255 - blue(liveColor)) * cells[m][n] / generations)
-                            );
-                        break;
 
-                        default:
-                        case 0:  // Darkening
-                            c = color(round(red(liveColor) * cells[m][n] / generations), 
-                                    round(green(liveColor) * cells[m][n] / generations), 
-                                    round(blue(liveColor) * cells[m][n] / generations)
-                                );
-                        break;
+                    if (genColMethod == 0) { // Brightening
+                        c = color(red(liveColor) + round((255 - red(liveColor)) * cells[m][n] / generations), 
+                            green(liveColor) + round((255 - green(liveColor)) * cells[m][n] / generations), 
+                            blue(liveColor) + round((255 - blue(liveColor)) * cells[m][n] / generations)
+                        );
+                    } else if (genColMethod == 1) { // Darken Inverse
+                        c = color(round(red(liveColor) * (1 - cells[m][n] / generations)), 
+                            round(green(liveColor) * (1 - cells[m][n] / generations)), 
+                            round(blue(liveColor) * (1 - cells[m][n] / generations))
+                        );
+                    } else if (genColMethod == 2) {
+                        c = color(round(red(liveColor) * cells[m][n] / generations), 
+                            round(green(liveColor) * cells[m][n] / generations), 
+                            round(blue(liveColor) * cells[m][n] / generations)
+                        );
                     }
-
                 } else {
                     c = color(0,0,0);
                 }
@@ -302,26 +303,18 @@ Written by Tyson Moll */
     /// Gets mirrored co-ordinates
     function GridMirror(xPoint, yPoint) {
     
-        var m = xPoint; var n = yPoint;
-        switch (mirrorMethod) {
-            case 1: // Horizontal
-                if (xPoint > numCellsX/2) {m = numCellsX - xPoint;} 
-            break;
+        var newM = xPoint; var newN = yPoint;
 
-            case 2: // Vertical
-                if (yPoint > numCellsY/2) {n = numCellsY - yPoint;}
-            break;
-
-            case 3: // 4 Panel
-                if (xPoint > numCellsX/2) {m = numCellsX - xPoint;} 
-                if (yPoint > numCellsY/2) {n = numCellsY - yPoint;}
-            break;
-
-            case 0: // No Mirror
-            default:
-            break;
+        if (mirrorMethod == 1) { // Horizontal
+            if (xPoint > numCellsX/2) {newM = numCellsX - xPoint;} 
+        } else if (mirrorMethod == 2) { // Vertical
+            if (yPoint > numCellsY/2) {newN = numCellsY - yPoint;}
+        } else if (mirrorMethod == 3) { // Both
+            if (xPoint > numCellsX/2) {newM = numCellsX - xPoint;} 
+            if (yPoint > numCellsY/2) {newN = numCellsY - yPoint;}
         }
-        return [m, n];
+
+        return [newM, newN];
     }
 }
 

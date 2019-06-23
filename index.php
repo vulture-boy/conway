@@ -47,12 +47,12 @@
           <button id="randomBtn" onclick="RandomizeColors()">Randomize Colours!</button> 
           <br><br>
           Cell Age 
-          <input type="number" min="1" max="20" value="1" id="cellAge">
-          Col. Mode
-          <input type="number" min="0" max="2" value="1" id="cellAgeCol"> 
+          <input type="number" min="1" max="50" value="1" id="cellAge">
+          Aging Col. Mode
+          <input type="number" min="0" max="50" value="1" id="cellAgeCol"> 
           <br>
           Mirror Mode
-          <input type="number" min="0" max="3" value="0" id="cellMirror">
+          <input type="number" min="0" max="50" value="0" id="cellMirror">
 
         </div>
       </div>
