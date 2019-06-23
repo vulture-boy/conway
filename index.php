@@ -29,30 +29,30 @@
         <div id="options" display="block">
         <br>
           <div id="cellSizeValue">Cell Size: 5</div>
-          <input type="range" min="1" max="128" value="5" class="slider" id="cellSize">
+          <input type="range" min="1" max="128" value="5" class="slider" id="cellSize" onchange="UpdateCellSize()">
           <div id="updateSpeedValue">Update Delay: 500</div>
-          <input type="range" min="1" max="3000" value="500" class="slider" id="updateSpeed">
+          <input type="range" min="1" max="3000" value="500" class="slider" id="updateSpeed" onchange="UpdateDelay()">
           <span max-size="50%"><p>Note: update delay (in millis)<br> is dependent on PC processing power.</p></span>
 
           Live Cell Color
-          <input type="number" min="0" max="255" value="0" class="rgb" id="colLiveR">
-          <input type="number" min="0" max="255" value="128" class="rgb" id="colLiveG">
-          <input type="number" min="0" max="255" value="64" class="rgb" id="colLiveB"> <br>
+          <input type="number" min="0" max="255" value="0" class="rgb" id="colLiveR" onchange="GetNewColor()">
+          <input type="number" min="0" max="255" value="128" class="rgb" id="colLiveG" onchange="GetNewColor()">
+          <input type="number" min="0" max="255" value="64" class="rgb" id="colLiveB" onchange="GetNewColor()"> <br>
 
           Dead Cell Color
-          <input type="number" min="0" max="255" value="12" class="rgb" id="colDeadR">
-          <input type="number" min="0" max="255" value="168" class="rgb" id="colDeadG">
-          <input type="number" min="0" max="255" value="88" class="rgb" id="colDeadB"> <br>
+          <input type="number" min="0" max="255" value="12" class="rgb" id="colDeadR" onchange="GetNewColor()">
+          <input type="number" min="0" max="255" value="168" class="rgb" id="colDeadG" onchange="GetNewColor()">
+          <input type="number" min="0" max="255" value="88" class="rgb" id="colDeadB" onchange="GetNewColor()"> <br>
 
           <button id="randomBtn" onclick="RandomizeColors()">Randomize Colours!</button> 
           <br><br>
           Cell Age 
-          <input type="number" min="1" max="50" value="1" id="cellAge">
+          <input type="number" min="1" max="50" value="1" id="cellAge" onchange="UpdateAge()">
           Aging Col. Mode
-          <input type="number" min="0" max="50" value="1" id="cellAgeCol"> 
+          <input type="number" min="0" max="50" value="1" id="cellAgeCol" onchange="UpdateGenCol()"> 
           <br>
           Mirror Mode
-          <input type="number" min="0" max="50" value="0" id="cellMirror">
+          <input type="number" min="0" max="50" value="0" id="cellMirror" onchange="UpdateMirror()">
 
         </div>
       </div>

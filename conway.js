@@ -17,15 +17,15 @@ Written by Tyson Moll */
     {
         var initMethod = 1; // Determines which method to use when assigning init values
         var cycleMethod = 0; // Determines which action method to apply each cycle
-        var mirrorMethod = 3; // Method of symmettry
+        var mirrorMethod = 0; // Method of symmettry
         var autoRun = true; // Whether to automatically advance the cycle
         var tick = false; // Set to true to advance by one cycle while paused
-        var generations = 1; // Number of cell generations to track
-        var maxCellAge = 5; // Maximum number of cell generations to track (DOM LIMIT)
+        var generations = 3; // Number of cell generations to track
+        var maxCellAge = 25; // Maximum number of cell generations to track (DOM LIMIT)
         var genColMethod = 1; // Method to apply colour for generations
         var genColOptions = 2; // Total num. of options
         var autoRunTime = 0; // Last recorded cycle end time
-        var autoRunTimeMax = 60; // Required difference between current time and last recorded cycle time
+        var autoRunTimeMax = 30; // Required difference between current time and last recorded cycle time
     }
 
     // Canvas Properties
@@ -55,6 +55,7 @@ Written by Tyson Moll */
     function setup() {
         CanvasPrep(); // Prepare Canvas
         DOMPrep(); // Prepare Option DOMs
+        UpdateAll(); // Runs all Update scripts
         InitializeCells(); // Setup Cells
     }
     /// Setup for Canvas elements
@@ -102,6 +103,14 @@ Written by Tyson Moll */
         
     }
 
+    function UpdateAll() {
+        UpdateCellSize();
+        UpdateDelay();
+        UpdateAge();
+        UpdateGenCol();
+        UpdateMirror();
+        GetNewColor();
+    }
     /// Sets up the cells used in the application
     function InitializeCells() {
 
@@ -138,40 +147,10 @@ Written by Tyson Moll */
 {
     /// Main Loop
     function draw() {
-        CheckData(); // Check Option Data
         RunActions(); // Process Actions
         Visualize(); // Visualization
     }
-    /// Reads the current status of DOM inputs
-    function CheckData() {
 
-        // Update Slider Numbers
-        sliderSizeNum.innerHTML = "Cell Size: " + sliderSize.value;
-        sliderUpdateNum.innerHTML = "Update Delay: " + sliderUpdate.value;
-
-        var triggerReset = false; // Flag to refresh cell status
-        if (cellSize != sliderSize.value) {  // Size Change
-            cellSize = sliderSize.value
-            triggerReset = true;
-        }
-        if (autoRunTimeMax != sliderUpdate.value) { // Delay Change
-            autoRunTimeMax = sliderUpdate.value;
-            autoRunTime = millis();
-        }
-        GetNewColor(); // Colour Changes
-
-        // General field changes
-        fieldCellAge.value = clamp(fieldCellAge.value, 1, maxCellAge);
-        generations = fieldCellAge.value;
-        fieldGenCol.value = clamp(fieldGenCol.value, 0, genColOptions);
-        genColMethod = fieldGenCol.value;
-        fieldMirror.value = clamp(fieldMirror.value, 0, 3);
-        mirrorMethod = fieldMirror.value;
-
-        if (triggerReset) {
-            InitializeCells();
-        }
-    }
     /// Determines when cycles are processed
     function RunActions() {
             
@@ -199,7 +178,6 @@ Written by Tyson Moll */
             
                 var mirroredGrid = GridMirror(i,j); // Get symmettry viz
                 var m = mirroredGrid[0]; var n = mirroredGrid[1]; // Substitution values
-                if (mirroredGrid[0] != i) {console.log("note");}
 
                 noStroke();
                 var c = color(0,0,0);
@@ -396,6 +374,37 @@ Written by Tyson Moll */
     }
     function Tick() {
         tick = true;
+    }
+
+    function UpdateCellSize() {
+        sliderSizeNum.innerHTML = "Cell Size: " + sliderSize.value;
+        if (cellSize != sliderSize.value) {  // Size Change
+            cellSize = sliderSize.value
+            InitializeCells();
+        }
+    }
+    
+    function UpdateDelay() {
+        sliderUpdateNum.innerHTML = "Update Delay: " + sliderUpdate.value;
+        if (autoRunTimeMax != sliderUpdate.value) { // Delay Change
+            autoRunTimeMax = sliderUpdate.value;
+            autoRunTime = millis();
+        }
+    }
+    
+    function UpdateAge() {
+        fieldCellAge.value = clamp(fieldCellAge.value, 1, maxCellAge);
+        generations = fieldCellAge.value;
+    }
+    
+    function UpdateGenCol() {
+        fieldGenCol.value = clamp(fieldGenCol.value, 0, genColOptions);
+        genColMethod = fieldGenCol.value;
+    }
+    
+    function UpdateMirror() {
+        fieldMirror.value = clamp(fieldMirror.value, 0, 3);
+        mirrorMethod = fieldMirror.value;
     }
 }
 
