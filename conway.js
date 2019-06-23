@@ -56,6 +56,7 @@ Written by Tyson Moll */
         CanvasPrep(); // Prepare Canvas
         DOMPrep(); // Prepare Option DOMs
         UpdateAll(); // Runs all Update scripts
+        ShowPage(0); // Show first page
         InitializeCells(); // Setup Cells
     }
     /// Setup for Canvas elements
@@ -405,6 +406,42 @@ Written by Tyson Moll */
     function UpdateMirror() {
         fieldMirror.value = clamp(fieldMirror.value, 0, 3);
         mirrorMethod = fieldMirror.value;
+    }
+
+    function ShowPage(num) {
+
+        var backLink = document.getElementById('backLink');
+        var aboutLink = document.getElementById('aboutLink');
+        var spaceLink = document.getElementById('spaceLink');
+        var aboutPage = document.getElementById('aboutPage');
+        var simPage = document.getElementById('simPage');
+        var spacePage = document.getElementById('spacePage');
+
+        if (num == 0) {
+            backLink.style.display = "none";
+            aboutLink.style.display = "block";
+            spaceLink.style.display = "block";
+
+            aboutPage.style.display = "none";
+            simPage.style.display = "block";
+            spacePage.style.display = "none";
+        } else if (num == 1) {
+            backLink.style.display = "block";
+            aboutLink.style.display = "none";
+            spaceLink.style.display = "block";
+
+            aboutPage.style.display = "block";
+            simPage.style.display = "none";
+            spacePage.style.display = "none";
+        } else if (num == 2) {
+            backLink.style.display = "block";
+            aboutLink.style.display = "block";
+            spaceLink.style.display = "none";
+
+            aboutPage.style.display = "none";
+            simPage.style.display = "none";
+            spacePage.style.display = "block";
+        }
     }
 }
 
